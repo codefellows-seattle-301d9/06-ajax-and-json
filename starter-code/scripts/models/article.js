@@ -12,6 +12,8 @@ function Article (opts) {
  the prototype, as that would only be relevant to a single instantiated Article.
  */
 
+Article.all = [];
+
 Article.prototype.toHtml = function(scriptTemplateId) {
   var template = Handlebars.compile($(scriptTemplateId).text());
   this.daysAgo = parseInt((new Date() - new Date(this.publishedOn))/60/60/24/1000);
@@ -28,19 +30,32 @@ Article.prototype.toHtml = function(scriptTemplateId) {
 /* TODO: Refactor this code into a function for greater control.
     It will take in our data, and process it via the Article constructor: */
 
-ourLocalData.sort(function(a,b) {
-  return (new Date(b.publishedOn)) - (new Date(a.publishedOn));
-});
-
-ourLocalData.forEach(function(ele) {
-  articles.push(new Article(ele));
-});
-
+Article.loadAll = function(dataWePassIn) {
+  dataWePassIn.sort(function(a,b) {
+    return (new Date(b.publishedOn)) - (new Date(a.publishedOn));
+  }).forEach(function(ele) {
+    Article.all.push(new Article(ele));
+  });
+};
 
 /* This function below will retrieve the data from either a local or remote
  source, process it, then hand off control to the View: */
 
-
+Article.fetchAll = function() {
+  if (localStorage.hackerIpsum) {
+    // when our data is already in local Storage we will first process (sort & instantiate) it, then render the index page
+    // Article.loadAll (// TODO: Invoke with our localStorage! Should we PARSE or stringify it?)
+    // TODO: Now let's render the index page
+  } else {
+    /* TODO: Otherwise, wothout our localStorage data, we need to:
+      1. Retrive our JSON file asynchronously
+      (which jQuery method is best for this?).
+      Within this method, we should:
+      1. Load our Json data
+      2. Stor that data in localStorage so we can skip the erver call next time.
+      3. And then render the index page */
+  }
+};
 
 
 
