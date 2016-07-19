@@ -51,7 +51,7 @@ Article.fetchAll = function() {
      // TODO: DONE Invoke with our localStorage! Should we PARSE or stringify it?)
     // TODO: DONE Now let's render the index page
   } else {
-    /* TODO: Otherwise, wothout our localStorage data, we need to:
+    /* TODO DONE: Otherwise, wothout our localStorage data, we need to:
       1. Retrive our JSON file asynchronously
       (which jQuery method is best for this?).
       Within this method, we should:
@@ -59,10 +59,11 @@ Article.fetchAll = function() {
       2. Store that data in localStorage so we can skip the erver call next time.
       3. And then render the index page */
 
-      $.getJSON("data/hackerIpsum.json", function(data){
-        localStorage.hackerIpsum = JSON.stringify(data);
-        articleView.renderIndexPage();
-      });
+    $.getJSON('data/hackerIpsum.json', function(data){
+      localStorage.hackerIpsum = JSON.stringify(data);
+      Article.loadAll(data);
+      articleView.renderIndexPage();
+    });
   }
 };
 
