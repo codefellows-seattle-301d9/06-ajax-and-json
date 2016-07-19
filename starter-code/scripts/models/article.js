@@ -4,7 +4,7 @@ function Article (opts) {
   }
 }
 
-/* TODO: Instead of a global `articles = []` array, let's track this list of all
+/* TODO DONE: Instead of a global `articles = []` array, let's track this list of all
  articles directly on the constructor function. Note: it is NOT on the prototype.
  In JavaScript, functions are themselves objects, which means we can add
  properties/values to them at any time. In this case, we have a key:value pair
@@ -27,7 +27,7 @@ Article.prototype.toHtml = function(scriptTemplateId) {
  call these "class-level" functions, that are relevant to the entire "class"
  of objects that are Articles, rather than just one instance. */
 
-/* TODO: Refactor this code into a function for greater control.
+/* TODO DONE: Refactor this code into a function for greater control.
     It will take in our data, and process it via the Article constructor: */
 
 Article.loadAll = function(dataWePassIn) {
@@ -44,7 +44,11 @@ Article.loadAll = function(dataWePassIn) {
 Article.fetchAll = function() {
   if (localStorage.hackerIpsum) {
     // when our data is already in local Storage we will first process (sort & instantiate) it, then render the index page
-    // Article.loadAll (// TODO: Invoke with our localStorage! Should we PARSE or stringify it?)
+    var localHacker = JSON.parse(localStorage.hackerIpsum);
+    Article.loadAll(localHacker);
+    articleView.renderIndexPage();
+
+     // TODO: Invoke with our localStorage! Should we PARSE or stringify it?)
     // TODO: Now let's render the index page
   } else {
     /* TODO: Otherwise, wothout our localStorage data, we need to:
@@ -52,7 +56,7 @@ Article.fetchAll = function() {
       (which jQuery method is best for this?).
       Within this method, we should:
       1. Load our Json data
-      2. Stor that data in localStorage so we can skip the erver call next time.
+      2. Store that data in localStorage so we can skip the erver call next time.
       3. And then render the index page */
   }
 };
