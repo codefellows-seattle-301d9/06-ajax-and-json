@@ -40,33 +40,37 @@ Article.loadAll = function(dataWePassIn) {
 
 /* This function below will retrieve the data from either a local or remote
  source, process it, then hand off control to the View: */
-
 Article.fetchAll = function() {
   if (localStorage.hackerIpsum) {
-    /* When our data is already in localStorage:
-    1. We can process it (sort and instantiate),
-    2. Then we can render the index page. */
-    // Article.loadAll(// TODO: Invoke with our localStorage! Should we parse or stringify this?);
-    // TODO: Now let's render the index page
-    // var tempDataStore = JSON.parse(data);
-    // console.log('processed data ' + tempDataStore);
-    Article.loadAll(JSON.parse(localStorage.hackerIpsum));
-    articleView.renderIndexPage();
-  } else {
-    /* TODO: Otherwise, without our localStorage data, we need to:
-    - Retrive our JSON file asynchronously
-     (which jQuery method method is best for this?).
-     Within this method, we should:
-     1. Load our json data,
-     2. Store that data in localStorage so we can skip the server call next time.
-     3. And then render the index page. */
-    $.getJSON('/data/hackerIpsum.json', function(data) {
-      localStorage.hackerIpsum = JSON.stringify(data);
-      Article.loadAll(data);
-      articleView.renderIndexPage();
+    $.ajax({
+      url: '/data/hackerIpsum.json',
+      type: 'HEAD',
+      success: function(data, message, xhr) {
+        var eTag = xhr.getResponseHeader('ETag');
+        if (!localStorage.eTag || eTag !== localStorage.eTag) {
+          Article.getAll();
+        }
+        else {
+          Article.loadAll(JSON.parse(localStorage.hackerIpsum));
+          articleView.renderIndexPage();
+        }
+      }
     });
+  } else {
+    Article.getAll();
   }
 };
+
+// Call this function if you want to refresh data from the source
+Article.getAll = function() {
+  $.getJSON('/data/hackerIpsum.json', function(data, message, xhr) {
+    localStorage.eTag = xhr.getResponseHeader('ETag');
+    localStorage.hackerIpsum = JSON.stringify(data);
+    Article.loadAll(data);
+    articleView.renderIndexPage();
+  });
+};
+
 
 
 
