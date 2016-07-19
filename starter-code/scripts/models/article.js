@@ -43,6 +43,9 @@ Article.loadAll = function(dataWePassIn) {
 
 Article.fetchAll = function() {
   if (localStorage.hackerIpsum) {
+    // $.ajax('/data/hackerIpsum.json', {
+    //   ifModified : 
+    // })
     /* When our data is already in localStorage:
     1. We can process it (sort and instantiate),
     2. Then we can render the index page. */
