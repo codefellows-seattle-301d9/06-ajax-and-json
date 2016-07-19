@@ -43,23 +43,24 @@ Article.loadAll = function(dataWePassIn) {
 
 Article.fetchAll = function() {
   if (localStorage.hackerIpsum) {
-    var storedData = JSON.parse(localStorage.storedData);
+    var storedData = JSON.parse(localStorage.hackerIpsum);
     Article.loadAll(storedData);
-    return storedData;
   } else {
-    /* TODO: Otherwise, without our localStorage data, we need to:
+    /* Done: Otherwise, without our localStorage data, we need to:
     - Retrive our JSON file asynchronously
      (which jQuery method method is best for this?).
      Within this method, we should:
      1. Load our json data,
      2. Store that data in localStorage so we can skip the server call next time.
      3. And then render the index page. */
-    $.getJSON('data/hackerIpsum.json', function(data) {
-      console.log(data);
+    $.getJSON('data/hackerIpsum.json', function(storedData) {
+      localStorage.hackerIpsum = JSON.stringify(storedData);
+      Article.loadAll(storedData);
     });
   }
 };
 
+Article.fetchAll();
 
 
 
