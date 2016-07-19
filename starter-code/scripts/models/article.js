@@ -48,8 +48,8 @@ Article.fetchAll = function() {
     Article.loadAll(localHacker);
     articleView.renderIndexPage();
 
-     // TODO: Invoke with our localStorage! Should we PARSE or stringify it?)
-    // TODO: Now let's render the index page
+     // TODO: DONE Invoke with our localStorage! Should we PARSE or stringify it?)
+    // TODO: DONE Now let's render the index page
   } else {
     /* TODO: Otherwise, wothout our localStorage data, we need to:
       1. Retrive our JSON file asynchronously
@@ -58,13 +58,13 @@ Article.fetchAll = function() {
       1. Load our Json data
       2. Store that data in localStorage so we can skip the erver call next time.
       3. And then render the index page */
+
+      $.getJSON("data/hackerIpsum.json", function(data){
+        localStorage.hackerIpsum = JSON.stringify(data);
+        articleView.renderIndexPage();
+      });
   }
 };
-
-
-
-
-
 
 
 /* Great work so far! STRETCH GOAL TIME!? Refactor your fetchAll above, or
