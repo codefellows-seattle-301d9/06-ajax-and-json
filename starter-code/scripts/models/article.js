@@ -4,7 +4,7 @@ function Article (opts) {
   }
 }
 
-/* TODO: Instead of a global `articles = []` array, let's track this list of all
+/* TODO - DONE: Instead of a global `articles = []` array, let's track this list of all
  articles directly on the constructor function. Note: it is NOT on the prototype.
  In JavaScript, functions are themselves objects, which means we can add
  properties/values to them at any time. In this case, we have a key:value pair
@@ -27,7 +27,7 @@ Article.prototype.toHtml = function(scriptTemplateId) {
  call these "class-level" functions, that are relevant to the entire "class"
  of objects that are Articles, rather than just one instance. */
 
-/* TODO: Refactor this code into a function for greater control.
+/* TODO - DONE: Refactor this code into a function for greater control.
     It will take in our data, and process it via the Article constructor: */
 
 Article.loadAll = function(dataWePassIn) {
@@ -40,23 +40,35 @@ Article.loadAll = function(dataWePassIn) {
 
 /* This function below will retrieve the data from either a local or remote
  source, process it, then hand off control to the View: */
-
 Article.fetchAll = function() {
   if (localStorage.hackerIpsum) {
-    /* When our data is already in localStorage:
-    1. We can process it (sort and instantiate),
-    2. Then we can render the index page. */
-    // Article.loadAll(// TODO: Invoke with our localStorage! Should we parse or stringify this?);
-    // TODO: Now let's render the index page.
+    $.ajax({
+      url: '/data/hackerIpsum.json',
+      type: 'HEAD',
+      success: function(data, message, xhr) {
+        var eTag = xhr.getResponseHeader('ETag');
+        if (!localStorage.eTag || eTag !== localStorage.eTag) {
+          Article.getAll();
+        }
+        else {
+          Article.loadAll(JSON.parse(localStorage.hackerIpsum));
+          articleView.renderIndexPage();
+        }
+      }
+    });
   } else {
-    /* TODO: Otherwise, without our localStorage data, we need to:
-    - Retrive our JSON file asynchronously
-     (which jQuery method method is best for this?).
-     Within this method, we should:
-     1. Load our json data,
-     2. Store that data in localStorage so we can skip the server call next time.
-     3. And then render the index page. */
+    Article.getAll();
   }
+};
+
+// Call this function if you want to refresh data from the source
+Article.getAll = function() {
+  $.getJSON('/data/hackerIpsum.json', function(data, message, xhr) {
+    localStorage.eTag = xhr.getResponseHeader('ETag');
+    localStorage.hackerIpsum = JSON.stringify(data);
+    Article.loadAll(data);
+    articleView.renderIndexPage();
+  });
 };
 
 
